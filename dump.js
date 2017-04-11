@@ -1,6 +1,9 @@
 var express = require('express');
 var app = express();
 var fs = require('fs');
+var moment = require('moment');
+moment().format();
+
 
 mysql = require('mysql');
 var connection = mysql.createConnection({
@@ -12,7 +15,7 @@ var connection = mysql.createConnection({
 connection.connect();
 
 
-app.get("/data", function(req, res) {
+app.get("/dump", function(req, res) {
   console.log("param=" + req.query);
 
   //var qstr = 'select * from sensors where time > date_sub(now(), INTERVAL 1 DAY) ';
@@ -24,16 +27,28 @@ app.get("/data", function(req, res) {
       return;
     }
 
+	var currentTime = Date.now();
+	var _24hoursago = moment(currentTime).add(-1,'day');
+
     console.log("Got "+ rows.length +" records");
     var html = "<!doctype html><html><body>";
-    //html += "<H1> Sensor Data for Last 24 Hours</H1>";
-    //html += "<table border=1 cellpadding=3 cellspacing=0>";
-    //html += "<tr><td>Seq#<td>Time Stamp<td>Temperature";
+    html += "<H1> Sensor Data for Last 24 Hours</H1>";
+	html += "YesterdayTime: " + _24hoursago.format('MMMM Do YYYY, h:mm:ss a') + "<br>";
+	html += "CurrentTime: "+moment(currentTime).format('MMMM Do YYYY, h:mm:ss a') + "<br>";
+    html += "<table border=1 cellpadding=3 cellspacing=0>";
+    html += "<tr><td>Seq#<td>Time Stamp<td>Temperature<tr>";
+
+	var count = 0;
     for (var i=0; i< rows.length; i++) {
-       html += "<br>"+ JSON.stringify(rows[i]);
+	if(rows[i].time >= _24hoursago){
+		html += "<tr><td>";
+		html += (count++) + "<td>";
+		html += moment(rows[i].time).format('MMMM Do YYY, h:mm:ss a') + "<td>";
+		html += rows[i].value + "<tr>";
+	}
     }
-    //html += "</table>";
-    //html += "</body></html>";
+    html += "</table>";
+    html += "</body></html>";
     res.send(html);
   });
 
@@ -48,7 +63,7 @@ getClientAddress = function (req){
 	return ip;
 };
 
-int count = 0;
+count = 0;
 
 app.get('/ading', function(req,res){
 	console.log("file writing bring!");
@@ -57,9 +72,9 @@ app.get('/ading', function(req,res){
 
 	inData = {};	
 	inData.seq = count++;
-	inData.device = req.query.device;
-	inData.unit = req.query.unit;
-	inData.type = req.query.type;
+	inData.device = 1004;
+	inData.unit = '0';
+	inData.type = 't';
 	inData.value = req.query.field1;
 	inData.ip = getClientAddress(req);
 	console.log("---------------------------------------");
@@ -76,7 +91,7 @@ app.get('/ading', function(req,res){
 
 	});
 
-	fs.appendFile("/home/20121590/WebServer/commingData.txt",inData.value+"\n" , function(err){
+	fs.appendFile("commingData.txt",inData.value+"\n" , function(err){
 		if(err){
 			return console.log(err);
 		}
