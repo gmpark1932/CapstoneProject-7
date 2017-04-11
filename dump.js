@@ -42,12 +42,14 @@ app.get("/data", function(req, res) {
 app.get('/ading', function(req,res){
 	console.log("file writing bring!");
 
+	res.send(req.query.field1);
+
 	inData = {};	
 	inData.seq = req.query.seq;
 	inData.device = req.query.device;
 	inData.unit = req.query.unit;
 	inData.type = req.query.type;
-	inData.value = req.query.value;
+	inData.value = req.query.field1;
 	inData.ip = req.hostname;
 	console.log("---------------------------------------");
 	console.log("seq : " + inData.seq);
