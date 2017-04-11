@@ -43,15 +43,27 @@ app.get('/', function(req,res){
 	console.log("file writing bring!");
 
 	inData = {};	
-	inData.seq = res.query.seq;
-	
+	inData.seq = req.query.seq;
+	inData.device = req.query.device;
+	inData.unit = req.query.unit;
+	inData.type = req.query.type;
+	inData.value = req.query.value;
+	inData.ip = req.hostname;
+	console.log("---------------------------------------");
+	console.log("seq : " + inData.seq);
+	console.log("device : " + inData.device);
+	console.log("unit : " + inData.unit);
+	console.log("type : " + inData.type);
+	console.log("value : " + inData.value);
+	console.log("IP : " + inData.ip);
+
 	var query = connection.query('insert into sensors set ?',inData,function(err,rows,cols){
 	if(err) throw err;
 	console.log("done");
 
 	});
 /*
-	fs.appendFile("/home/20121590/WebServer/commingData.txt","!!!\n" , function(err){
+	fs.appendFile("/home/20121590/WebServer/commingData.txt",inData.value+"\n" , function(err){
 		if(err){
 			return console.log(err);
 		}
