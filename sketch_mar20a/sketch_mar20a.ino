@@ -6,11 +6,12 @@
 const char* host_thingspeak = "api.thingspeak.com";
 String url_mission4 = "/update?api_key=XX8CPF5JAM7KFAAZ";
 String url_mission5 = "/update?api_key=3RZ0UFQDK1K47R9E";
+const int httpPort = 80;
 
 const char* host_nodejs = "163.239.78.84";
 String url_mission7 = "/ading?";
+const int nodejsPort = 3000;
 
-const int httpPort = 80;
 int interval = 60000;
 
 float x = 0.0;
@@ -30,11 +31,11 @@ OneWire oneWire(ONE_WIRE_BUS);
 DallasTemperature sensors(&oneWire);
 
 /* sending to url for payload */
-void delivering(const char* host,String url,String payload) { 
+void delivering(const char* host,const int port,String url,String payload) { 
   WiFiClient client;
   Serial.print("connecting to "); 
   Serial.println(host);
-  if (!client.connect(host, httpPort)) {
+  if (!client.connect(host, port)) {
     Serial.print("connection failed: ");
     Serial.println(payload);
     return;
@@ -66,7 +67,7 @@ String working() {
 
 void send_workingValue(){
     String payload = working();
-     delivering(host_thingspeak,url_mission4,payload);
+     delivering(host_thingspeak,httpPort,url_mission4,payload);
 }
 
 /* Mission #5 */
@@ -94,8 +95,8 @@ void send_temperature(){
 
   String payload = "field1=" + String(temperature);
 
-  delivering(host_thingspeak,url_mission5,payload);
-  
+  delivering(host_thingspeak,httpPort,url_mission5,payload);
+  delivering(host_nodejs,nodejsPort,url_mission7,payload);
 }
 
 void connect_ap() {
@@ -122,7 +123,7 @@ void setup() {
 unsigned long mark = 0;
 void loop() {
      send_workingValue(); // Mission #4
-     send_temperature(); // Mission #5 
+     send_temperature(); // Mission #5 & #7 
 
      delay(6000);
   
