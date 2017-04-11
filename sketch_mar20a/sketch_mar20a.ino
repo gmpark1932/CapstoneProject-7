@@ -125,6 +125,6 @@ void loop() {
      send_workingValue(); // Mission #4
      send_temperature(); // Mission #5 & #7 
 
-     delay(6000);
+     delay(60000);
   
 }
