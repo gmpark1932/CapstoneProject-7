@@ -62,7 +62,7 @@ app.get('/', function(req,res){
 	console.log("done");
 
 	});
-/*
+
 	fs.appendFile("/home/20121590/WebServer/commingData.txt",inData.value+"\n" , function(err){
 		if(err){
 			return console.log(err);
@@ -70,7 +70,7 @@ app.get('/', function(req,res){
 	});
 
 	console.log("The file was saved!");
-*/
+
 });
 
 app.listen(3000, function () {
