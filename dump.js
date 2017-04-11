@@ -39,18 +39,29 @@ app.get("/data", function(req, res) {
 
 });
 
+getClientAddress = function (req){
+	var ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+	if (ip.substr(0, 7) == "::ffff:") {
+  	ip = ip.substr(7)
+	}
+
+	return ip;
+};
+
+int count = 0;
+
 app.get('/ading', function(req,res){
 	console.log("file writing bring!");
 
 	res.send(req.query.field1);
 
 	inData = {};	
-	inData.seq = req.query.seq;
+	inData.seq = count++;
 	inData.device = req.query.device;
 	inData.unit = req.query.unit;
 	inData.type = req.query.type;
 	inData.value = req.query.field1;
-	inData.ip = req.hostname;
+	inData.ip = getClientAddress(req);
 	console.log("---------------------------------------");
 	console.log("seq : " + inData.seq);
 	console.log("device : " + inData.device);
